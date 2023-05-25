@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 
 public class BJ11401 {
 	
-	static int D = 1000000007;
+	static int P = 1000000007;
 	static HashMap <Long, Long> cache;
 
 	public static void main(String[] args) throws Exception {
@@ -18,23 +18,36 @@ public class BJ11401 {
 		long N = Long.parseLong(st.nextToken());
 		long K = Long.parseLong(st.nextToken());
 		
-		cache = new HashMap <> ();
+		cache = new HashMap <Long, Long>();
 		
-		System.out.println(combination(N,K));
+		long result = ( factorial(N) % P * exp(factorial(K) * factorial(N-K), P-2) % P ) % P;
+		
+		System.out.println(result);
 		
 	}
 	
-	public static long combination(long n, long k) {
+	public static long factorial(long a) {
+		// when a = 0, return 1 
+		long result = 1L;
+		while(a > 1) {
+			result = (result * a) % P;
+			a--;
+		}
+		return result;
+	}
+	
+	public static long exp(long base, long expo) {
+
+		if(expo == 1) return base % P;
 		
-		if(n == k) return 1;
-		if(k == 0) return 1;
+		long result = 1;
+		long temp = exp(base, (expo)/2);
 		
-		long key = n * 10000000 + k;
-		if(cache.containsKey(key)) return cache.get(key);
-		
-		long result = (combination(n-1, k-1) % D + combination(n-1, k) % D ) % D;
-		cache.put(key, result);
-		
+		if (expo % 2 == 0) {
+			result = temp % P * temp % P;
+		}else {
+			result = base % P *  temp % P * temp % P;
+		}
 		return result;
 	}
 
